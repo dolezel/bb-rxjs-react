@@ -1,4 +1,6 @@
-[presentation](https://dolezel.github.io/bb-rxjs-react/)
+# RxJS in React
+
+[Presentation](https://dolezel.github.io/bb-rxjs-react/)
 
 ```bash
 REPO=bb-rxjs-react
