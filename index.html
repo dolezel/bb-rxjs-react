@@ -25,7 +25,13 @@
         ? "css/print/pdf.css"
         : "css/print/paper.css";
       document.getElementsByTagName("head")[0].appendChild(link);
-    </script>
+		</script>
+		<style>
+			.cloud-dots {
+				font-size: 200% !important;
+				display: block;
+			}
+		</style>
   </head>
   <body>
     <div class="reveal">
@@ -46,7 +52,7 @@
           <p></p>
           <h3>What?</h3>
           <ul>
-            <li>Lazy Push collections of multiple values</li>
+            <li>Observable is a lazy Push collections of multiple values</li>
             <li>
               An Observable is a Producer of multiple values, "pushing" them to
               Observers (Consumers)
@@ -54,7 +60,7 @@
           </ul>
         </section>
         <section>
-          <h2>What II?</h2>
+          <h3>What II?</h3>
           <table>
             <thead>
               <tr>
@@ -100,7 +106,7 @@
 					</table>
 				</section>
 				<section>
-					<h2>Example</h2>
+					<h3>Example</h3>
 					<pre><code data-trim data-noescape class="hljs typescript">
 						import { Observable } from 'rxjs'
 
@@ -118,15 +124,15 @@
 					</code></pre>
 				</section>
 				<section>
-					<h2>In React</h2>
+					<h3>In React</h3>
 					<ul>
 						<li>In Components</li>
 						<li>With Redux - <code><a href="https://redux-observable.js.org/">redux-observable</a></code></li>
 					</ul>
 				</section>
 				<section>
-					<h2>Redux Middleware comparison</h2>
-					<p><small><a href="https://sandstorm.de/de/blog/post/async-redux-middleware-comparison.html">Redux Middleware Comparison</a></small></p>
+					<h3>Redux Middleware comparison</h3>
+					<p><small>from <a href="https://sandstorm.de/de/blog/post/async-redux-middleware-comparison.html">Redux Middleware Comparison</a></small></p>
 					<ul>
 						<li><strong>Redux Thunk</strong> - just return promise, write everything on your own</li>
 						<li><strong>Redux Saga</strong> - useful helper functions, generator functions ~ iterator like ~ imperative programming</li>
@@ -178,7 +184,7 @@
 				</section>
 				<section>
 					<section data-fullscreen>
-						<h2>Example</h2>
+						<h3>Example</h3>
 						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="2,7,13,18">
 							import { createStore, compose, Store, applyMiddleware } from 'redux'
 							import { createEpicMiddleware } from 'redux-observable'
@@ -201,7 +207,7 @@
 						</code></pre>
 					</section>
 					<section data-fullscreen>
-						<h2>Example (actions.ts)</h2>
+						<h3>Example (actions.ts)</h3>
 						<pre><code data-trim data-noescape class="hljs typescript">
 							import { ActionType, createStandardAction } from 'typesafe-actions'
 
@@ -217,7 +223,7 @@
 						</code></pre>
 					</section>
 					<section data-fullscreen>
-						<h2>Example (reducers.ts)</h2>
+						<h3>Example (reducers.ts)</h3>
 						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="17">
 							import { Reducer, combineReducers } from 'redux'
 							import { Action } from './actions'
@@ -251,7 +257,7 @@
 						</code></pre>
 					</section>
 					<section data-fullscreen>
-						<h2>Example (epics.ts)</h2>
+						<h3>Example (epics.ts)</h3>
 						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="7-12">
 							import { Epic, combineEpics } from 'redux-observable'
 							import { isActionOf } from 'typesafe-actions'
@@ -274,7 +280,7 @@
 				</section>
 				<section>
 					<section data-fullscreen>
-						<h2>Let's go async</h2>
+						<h3>Let's go async</h3>
 						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="1,2,6,10-20">
 							import { from, of } from 'rxjs'
 							import { filter, switchMap, catchError } from 'rxjs/operators'
@@ -299,6 +305,34 @@
 						</code></pre>
 					</section>
 				</section>
+				<section tagcloud>
+					pipe
+					of
+					from
+					filter
+					map
+					tap
+					switchMap
+					mergeMap
+					mergeMapTo
+					flatMap
+					concat
+					concatAll
+					merge
+					combineAll
+					combineLatest
+					catchError
+					<span class="cloud-dots">...</span>
+				 </section>
+				<section>
+					<h2>WTF?</h2>
+					<p><a href="https://rxmarbles.com/">Interactive diagrams of Rx Observables</a></p>
+					<p><a href="https://rxjs.dev/operator-decision-tree">Operator Decision Tree</a></p>
+					<p><a href="https://www.learnrxjs.io/">Learn RxJS</a></p>
+				</section>
+				<section>
+					<h2>Let's see some more epic examples</h2>
+				</section>
 			</div>
     </div>
 
@@ -315,6 +349,7 @@
           { src: "plugin/notes/notes.js", async: true },
           { src: "plugin/highlight/highlight.js", async: true },
           { src: "plugin/fullscreen.js", async: true },
+          { src: "plugin/tagcloud.js", async: true },
         ],
         hash: true,
       });
