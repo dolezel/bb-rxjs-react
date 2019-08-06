@@ -25,13 +25,13 @@
         ? "css/print/pdf.css"
         : "css/print/paper.css";
       document.getElementsByTagName("head")[0].appendChild(link);
-		</script>
-		<style>
-			.cloud-dots {
-				font-size: 200% !important;
-				display: block;
-			}
-		</style>
+    </script>
+    <style>
+      .cloud-dots {
+        font-size: 200% !important;
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <div class="reveal">
@@ -64,7 +64,7 @@
           <table>
             <thead>
               <tr>
-								<th></th>
+                <th></th>
                 <th>Producer</th>
                 <th>Consumer</th>
               </tr>
@@ -72,240 +72,291 @@
             <tbody>
               <tr>
                 <th>Pull</th>
-                <td><strong>Passive</strong><br/><small>produces data when requested</small></td>
-                <td><strong>Active</strong><br/><small>decides when data is requested</small></td>
+                <td>
+                  <strong>Passive</strong><br /><small
+                    >produces data when requested</small
+                  >
+                </td>
+                <td>
+                  <strong>Active</strong><br /><small
+                    >decides when data is requested</small
+                  >
+                </td>
               </tr>
               <tr>
                 <th>Push</th>
-                <td><strong>Active</strong><br/><small>produces data at its own pace</small></td>
-                <td><strong>Passive</strong><br/><small>reacts to received data</small></td>
+                <td>
+                  <strong>Active</strong><br /><small
+                    >produces data at its own pace</small
+                  >
+                </td>
+                <td>
+                  <strong>Passive</strong><br /><small
+                    >reacts to received data</small
+                  >
+                </td>
               </tr>
             </tbody>
-					</table>
-					<hr/>
-					<table>
-						<thead>
-							<tr>
-								<th></th>
-								<th>Single</th>
-								<th>Multiple</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<th>Pull</th>
-								<td>Function</td>
-								<td>Iterator</td>
-							</tr>
-							<tr>
-								<th>Push</th>
-								<td>Promise</td>
-								<td>Observable</td>
-							</tr>
-						</tbody>
-					</table>
-				</section>
-				<section>
-					<h3>Example</h3>
-					<pre><code data-trim data-noescape class="hljs typescript">
-						import { Observable } from 'rxjs'
+          </table>
+          <hr />
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Single</th>
+                <th>Multiple</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Pull</th>
+                <td>Function</td>
+                <td>Iterator</td>
+              </tr>
+              <tr>
+                <th>Push</th>
+                <td>Promise</td>
+                <td>Observable</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section>
+          <h3>Example</h3>
+          <pre><code data-trim data-noescape class="hljs typescript">
+            import { Observable } from 'rxjs'
 
-						const foo = new Observable(subscriber => {
-							console.log('Hello')
-							subscriber.next(42)
-						})
+            const foo = new Observable(subscriber => {
+              console.log('Hello')
+              subscriber.next(42)
+            })
 
-						foo.subscribe(x => {
-							console.log(x)
-						})
-						foo.subscribe(y => {
-							console.log(y)
-						})
-					</code></pre>
-				</section>
-				<section>
-					<h3>In React</h3>
-					<ul>
-						<li>In Components</li>
-						<li>With Redux - <code><a href="https://redux-observable.js.org/">redux-observable</a></code></li>
-					</ul>
-				</section>
-				<section>
-					<h3>Redux Middleware comparison</h3>
-					<p><small>from <a href="https://sandstorm.de/de/blog/post/async-redux-middleware-comparison.html">Redux Middleware Comparison</a></small></p>
-					<ul>
-						<li><strong>Redux Thunk</strong> - just return promise, write everything on your own</li>
-						<li><strong>Redux Saga</strong> - useful helper functions, generator functions ~ iterator like ~ imperative programming</li>
-						<li><strong>Redux Loop</strong> - mixing reducers with async behaviour ¯\_(ツ)_/¯, write everything on your own</li>
-						<li><strong>Redux Observable</strong> - wrapper around RxJS - functional, huuuge set of helper functions</li>
-					</ul>
-				</section>
-				<section>
-					<section><h2>Some useful libraries first</h2></section>
-					<section data-fullscreen>
-						<h3><code><a href="https://github.com/piotrwitek/typesafe-actions">typesafe-actions</a></code></h3>
-						<pre><code data-trim data-noescape class="hljs typescript">
-							import { createStandardAction, createAsyncAction } from 'typesafe-actions'
-							const myAction = createStandardAction('myType')&lt;TPayload>()
-							const { request, success, failure } = createAsyncAction(
-								'myRequestType',
-								'mySuccessType',
-								'myFailureType',
-							)&lt;TRequestPayload, TSuccessPayload, TFailurePayload>()
-						</code></pre>
-						<p><code>getType</code>, <code>isActionOf</code> - typeguards</p>
-					</section>
-					<section data-fullscreen>
-						<h3><code><a href="https://github.com/gcanti/io-ts">io-ts</a></code></h3>
-						<pre><code data-trim data-noescape class="hljs typescript">
-							import * as t from 'io-ts'
-							import { PathReporter } from 'io-ts/lib/PathReporter'
-							import { fold } from 'fp-ts/lib/Either'
+            foo.subscribe(x => {
+              console.log(x)
+            })
+            foo.subscribe(y => {
+              console.log(y)
+            })
+          </code></pre>
+        </section>
+        <section>
+          <h3>In React</h3>
+          <ul>
+            <li>In Components</li>
+            <li>
+              With Redux -
+              <code
+                ><a href="https://redux-observable.js.org/"
+                  >redux-observable</a
+                ></code
+              >
+            </li>
+          </ul>
+        </section>
+        <section>
+          <h3>Redux Middleware comparison</h3>
+          <p>
+            <small
+              >from
+              <a
+                href="https://sandstorm.de/de/blog/post/async-redux-middleware-comparison.html"
+                >Redux Middleware Comparison</a
+              ></small
+            >
+          </p>
+          <ul>
+            <li>
+              <strong>Redux Thunk</strong> - just return promise, write
+              everything on your own
+            </li>
+            <li>
+              <strong>Redux Saga</strong> - useful helper functions, generator
+              functions ~ iterator like ~ imperative programming
+            </li>
+            <li>
+              <strong>Redux Loop</strong> - mixing reducers with async behaviour
+              ¯\_(ツ)_/¯, write everything on your own
+            </li>
+            <li>
+              <strong>Redux Observable</strong> - wrapper around RxJS -
+              functional, huuuge set of helper functions
+            </li>
+          </ul>
+        </section>
+        <section>
+          <section><h2>Some useful libraries first</h2></section>
+          <section>
+            <h3>
+              <code
+                ><a href="https://github.com/piotrwitek/typesafe-actions"
+                  >typesafe-actions</a
+                ></code
+              >
+            </h3>
+            <pre><code data-trim data-noescape class="hljs typescript">
+              import { createStandardAction, createAsyncAction } from 'typesafe-actions'
+              const myAction = createStandardAction('myType')&lt;TPayload>()
+              const { request, success, failure } = createAsyncAction(
+                'myRequestType',
+                'mySuccessType',
+                'myFailureType',
+              )&lt;TRequestPayload, TSuccessPayload, TFailurePayload>()
+            </code></pre>
+            <p><code>getType</code>, <code>isActionOf</code> - typeguards</p>
+          </section>
+          <section>
+            <h3>
+              <code><a href="https://github.com/gcanti/io-ts">io-ts</a></code>
+            </h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+              import * as t from 'io-ts'
+              import { PathReporter } from 'io-ts/lib/PathReporter'
+              import { fold } from 'fp-ts/lib/Either'
 
-							export const Margins = t.type({
-								top: t.number,
-								bottom: t.number,
-								left: t.number,
-								right: t.number,
-							})
-							export type Margins = t.TypeOf&lt;typeof Margins>
+              export const Margins = t.type({
+                top: t.number,
+                bottom: t.number,
+                left: t.number,
+                right: t.number,
+              })
+              export type Margins = t.TypeOf&lt;typeof Margins>
 
-							export const createValidator = &lt;T>(type: t.Type&lt;T>) => (data: any): T => {
-								const validation = type.decode(data)
-								return fold(
-									() => {
-										throw new Error(PathReporter.report(validation).join('. '))
-									},
-									(value: T) => value,
-								)(validation)
-							}
-						</code></pre>
-					</section>
-				</section>
-				<section>
-					<section data-fullscreen>
-						<h3>Example</h3>
-						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="2,7,13,18">
-							import { createStore, compose, Store, applyMiddleware } from 'redux'
-							import { createEpicMiddleware } from 'redux-observable'
-							import { Action } from './actions'
-							import { IState, masterReducer } from './reducers'
-							import { epic } from './epics'
+              export const createValidator = &lt;T>(type: t.Type&lt;T>) => (data: any): T => {
+                const validation = type.decode(data)
+                return fold(
+                  () => {
+                    throw new Error(PathReporter.report(validation).join('. '))
+                  },
+                  (value: T) => value,
+                )(validation)
+              }
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3>Example</h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="2,7,13,18">
+              import { createStore, compose, Store, applyMiddleware } from 'redux'
+              import { createEpicMiddleware } from 'redux-observable'
+              import { Action } from './actions'
+              import { IState, masterReducer } from './reducers'
+              import { epic } from './epics'
 
-							const epicMiddleware = createEpicMiddleware&lt;Action, Action, IState>()
-							const configureStore = (initialState?: IState) => createStore(
-								masterReducer,
-								initialState,
-								compose(
-									applyMiddleware(
-										epicMiddleware,
-									),
-								),
-							)
-							export const store = configureStore()
-							epicMiddleware.run(epic)
-						</code></pre>
-					</section>
-					<section data-fullscreen>
-						<h3>Example (actions.ts)</h3>
-						<pre><code data-trim data-noescape class="hljs typescript">
-							import { ActionType, createStandardAction } from 'typesafe-actions'
+              const epicMiddleware = createEpicMiddleware&lt;Action, Action, IState>()
+              const configureStore = (initialState?: IState) => createStore(
+                masterReducer,
+                initialState,
+                compose(
+                  applyMiddleware(
+                    epicMiddleware,
+                  ),
+                ),
+              )
+              export const store = configureStore()
+              epicMiddleware.run(epic)
+            </code></pre>
+          </section>
+          <section>
+            <h3>Example (actions.ts)</h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+              import { ActionType, createStandardAction } from 'typesafe-actions'
 
-							const SubAction = {
-								addItem: createStandardAction('addItem')&lt;string>()
-							}
+              const SubAction = {
+                addItem: createStandardAction('addItem')&lt;string>()
+              }
 
-							// split by module, functionality, whatever...
-							export const Action = {
-								SubAction,
-							}
-							export type Action = ActionType&lt;typeof Action>
-						</code></pre>
-					</section>
-					<section data-fullscreen>
-						<h3>Example (reducers.ts)</h3>
-						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="17">
-							import { Reducer, combineReducers } from 'redux'
-							import { Action } from './actions'
+              // split by module, functionality, whatever...
+              export const Action = {
+                SubAction,
+              }
+              export type Action = ActionType&lt;typeof Action>
+            </code></pre>
+          </section>
+          <section>
+            <h3>Example (reducers.ts)</h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="17">
+              import { Reducer, combineReducers } from 'redux'
+              import { Action } from './actions'
 
-							export interface IStateSlice {
-								list: string[]
-							}
+              export interface IStateSlice {
+                list: string[]
+              }
 
-							const initialState: IStateSlice = { list: [] }
+              const initialState: IStateSlice = { list: [] }
 
-							const addItem = (state: IStateSlice, item: string): IStateSlice => ({
-								...state,
-								list: [...state.list, item],
-							})
+              const addItem = (state: IStateSlice, item: string): IStateSlice => ({
+                ...state,
+                list: [...state.list, item],
+              })
 
-							const sliceReducer: Reducer&lt;IStateSlice, Action> = (state = initialState, action) => {
-								switch (action.type) {
-									case getType(Action.SubAction.addItem): return addItem(state, action.payload)
-									default: return state
-								}
-							}
+              const sliceReducer: Reducer&lt;IStateSlice, Action> = (state = initialState, action) => {
+                switch (action.type) {
+                  case getType(Action.SubAction.addItem): return addItem(state, action.payload)
+                  default: return state
+                }
+              }
 
-							// split by module, functionality, whatever...
-							export interface IState {
-								stateSlice: IStateSlice
-							}
+              // split by module, functionality, whatever...
+              export interface IState {
+                stateSlice: IStateSlice
+              }
 
-							const masterReducer = combineReducers&lt;IState, Action>({
-								stateSlice: sliceReducer,
-							})
-						</code></pre>
-					</section>
-					<section data-fullscreen>
-						<h3>Example (epics.ts)</h3>
-						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="7-12">
-							import { Epic, combineEpics } from 'redux-observable'
-							import { isActionOf } from 'typesafe-actions'
-							import { filter, tap, ignoreElements } from 'rxjs/operators'
-							import { Action } from './actions'
-							import { IState } from './reducers'
+              const masterReducer = combineReducers&lt;IState, Action>({
+                stateSlice: sliceReducer,
+              })
+            </code></pre>
+          </section>
+          <section>
+            <h3>Example (epics.ts)</h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="7-12">
+              import { Epic, combineEpics } from 'redux-observable'
+              import { isActionOf } from 'typesafe-actions'
+              import { filter, tap, ignoreElements } from 'rxjs/operators'
+              import { Action } from './actions'
+              import { IState } from './reducers'
 
-							const someEpic: Epic&lt;Action, Action, IState> = ($action, store$) =>
-								$action.pipe(
-									filter(isActionOf(Action.SubAction.addItem)),
-									tap((action) => console.log(action.payload)),
-									ignoreElements(),
-								)
+              const someEpic: Epic&lt;Action, Action, IState> = ($action, store$) =>
+                $action.pipe(
+                  filter(isActionOf(Action.SubAction.addItem)),
+                  tap((action) => console.log(action.payload)),
+                  ignoreElements(),
+                )
 
-							export const epic = combineEpics(
-								someEpic,
-							)
-						</code></pre>
-					</section>
-				</section>
-				<section>
-					<section data-fullscreen>
-						<h3>Let's go async</h3>
-						<pre><code data-trim data-noescape class="hljs typescript" data-line-numbers="1,2,6,10-20">
-							import { from, of } from 'rxjs'
-							import { filter, switchMap, catchError } from 'rxjs/operators'
+              export const epic = combineEpics(
+                someEpic,
+              )
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <section>
+            <h3>Let's go async</h3>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="1,2,6,10-20">
+              import { from, of } from 'rxjs'
+              import { filter, switchMap, catchError } from 'rxjs/operators'
 
-							const DataType = t.type({ payload: t.array(t.string) })
-							type DataType = t.TypeOf&lt;typeof DataType>
-							const dataValidator = validate(DataType)
+              const DataType = t.type({ payload: t.array(t.string) })
+              type DataType = t.TypeOf&lt;typeof DataType>
+              const dataValidator = validate(DataType)
 
-							const loadData = createAsyncAction('loadData', 'loadDataSuccess', 'loadDataFailure')&lt;string, DataType, Error>()
+              const loadData = createAsyncAction('loadData', 'loadDataSuccess', 'loadDataFailure')&lt;string, DataType, Error>()
 
-							const someEpic: ($action) =>
-								$action.pipe(
-									filter(isActionOf(loadData.request)),
-									switchMap(({ payload }) =>
-										from(fetch(`/api/${payload}`)).pipe(
-											map(dataValidator),
-											map(loadData.success),
-											catchError((error: Error) => of(loadData.failure(error))),
-										)
-									),
-								)
-						</code></pre>
-					</section>
-				</section>
-				<section tagcloud>
+              const someEpic: ($action) =>
+                $action.pipe(
+                  filter(isActionOf(loadData.request)),
+                  switchMap(({ payload }) =>
+                    from(fetch(`/api/${payload}`)).pipe(
+                      map(dataValidator),
+                      map(loadData.success),
+                      catchError((error: Error) => of(loadData.failure(error))),
+                    ),
+                  ),
+                )
+            </code></pre>
+          </section>
+        </section>
+        <section tagcloud>
 					pipe
 					of
 					from
@@ -322,18 +373,66 @@
 					combineAll
 					combineLatest
 					catchError
-					<span class="cloud-dots">...</span>
-				 </section>
-				<section>
-					<h2>WTF?</h2>
-					<p><a href="https://rxmarbles.com/">Interactive diagrams of Rx Observables</a></p>
-					<p><a href="https://rxjs.dev/operator-decision-tree">Operator Decision Tree</a></p>
-					<p><a href="https://www.learnrxjs.io/">Learn RxJS</a></p>
-				</section>
-				<section>
-					<h2>Let's see some more epic examples</h2>
-				</section>
-			</div>
+          <span class="cloud-dots">...</span>
+        </section>
+        <section>
+          <h2>WTF?</h2>
+          <p>
+            <a href="https://rxmarbles.com/"
+              >Interactive diagrams of Rx Observables</a
+            >
+          </p>
+          <p>
+            <a href="https://rxjs.dev/operator-decision-tree"
+              >Operator Decision Tree</a
+            >
+          </p>
+          <p><a href="https://www.learnrxjs.io/">Learn RxJS</a></p>
+        </section>
+        <section>
+          <h2>Let's see some more epic examples</h2>
+        </section>
+        <section>
+          <h6>
+            Canceling/Switching previous observables based on data in payload
+          </h6>
+          <pre
+            class="stretch"
+          ><code data-trim data-noescape class="hljs typescript">
+            import { from, of } from 'rxjs'
+            import { filter, groupBy, mergeMap, switchMap, map, catchError } from 'rxjs/operators'
+
+            const getListing: Epic&lt;Action, Action, IState> = ($action) =>
+              $action.pipe(
+                filter(isActionOf(Actions.Library.Resources.getListing.request)),
+              <div style="position: relative; margin: -5em 0 5em -.2em; height: 15em">
+                <code class="fragment fade-out" style="position: absolute" data-fragment-index="0">
+                switchMap(({ payload: { resource } }) =>
+                  from(fetch(`/api/${resource}`)).pipe(
+                    map(validateListing),
+                    map(Actions.Library.Resources.getListing.success),
+                    catchError((error: Error) => of(Actions.Library.Resources.getListing.failure(error.message))),
+                  ),
+                ),
+              )
+                </code>
+                <code class="fragment fade-in" style="position: absolute; margin: -1.2em 0 1.2em 0" data-fragment-index="0">
+                <span style="color: green">groupBy(({ payload }) => payload.resource),</span>
+                <span style="color: green">mergeMap((group) => group.pipe(</span>
+                  switchMap(({ payload: { resource } }) =>
+                    from(fetch(`/api/${resource}`)).pipe(
+                      map(validateListing),
+                      map(Actions.Library.Resources.getListing.success),
+                      catchError((error: Error) => of(Actions.Library.Resources.getListing.failure(error.message))),
+                    ),
+                  ),
+                )),
+              )
+                </code>
+              </div>
+          </code></pre>
+        </section>
+      </div>
     </div>
 
     <script src="js/reveal.js"></script>
@@ -349,9 +448,9 @@
           { src: "plugin/notes/notes.js", async: true },
           { src: "plugin/highlight/highlight.js", async: true },
           { src: "plugin/fullscreen.js", async: true },
-          { src: "plugin/tagcloud.js", async: true },
+          { src: "plugin/tagcloud.js", async: true }
         ],
-        hash: true,
+        hash: true
       });
     </script>
   </body>
