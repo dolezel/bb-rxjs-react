@@ -393,6 +393,28 @@
           <h2>Let's see some more epic examples</h2>
         </section>
         <section>
+          <h6>Fire more actions on success</h6>
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="10-14">
+            import { from, of } from 'rxjs'
+            import { filter, mergeMap, switchMap, map, catchError } from 'rxjs/operators'
+
+            const someEpic: ($action) =>
+              $action.pipe(
+                filter(isActionOf(loadData.request)),
+                switchMap(({ payload }) =>
+                  from(fetch(`/api/${payload}`)).pipe(
+                    map(dataValidator),
+                    mergeMap((data) => [
+                      loadData.success(data),
+                      notification.add('Data loaded'),
+                    ]),
+                    catchError((error: Error) => of(loadData.failure(error))),
+                  ),
+                ),
+              )
+          </code></pre>
+        </section>
+        <section>
           <h6>
             Canceling/Switching previous observables based on data in payload
           </h6>
@@ -430,6 +452,271 @@
               )
                 </code>
               </div>
+          </code></pre>
+        </section>
+        <section>
+          <h6>Listen to action only after other acton occured</h6>
+          <pre class="stretch" style="position: relative"><code data-trim data-noescape class="hljs typescript fragment fade-out" style="position: absolute" data-fragment-index="0" data-line-numbers="7-10">
+              import { combineLatest } from 'rxjs'
+              import { filter, switchMap } from 'rxjs/operators'
+              import { makeGetFontConfig } from './selectors'
+
+              const getFontConfig = makeGetFontConfig()
+              const loadFont: Epic&lt;Action, Action, IState> = ($action, store$) =>
+                combineLatest(
+                  $action.pipe(filter(isActionOf(Actions.Fonts.loadFont.request))),
+                  $action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success))),
+                ).pipe(
+                  switchMap(([{ payload }]) => {
+                    const config = getFontConfig(store$.value, payload)
+                    ...
+                  }),
+                )
+            </code><code data-trim data-noescape class="hljs typescript fragment fade-in-then-out" style="position: absolute" data-fragment-index="0" data-line-numbers="6-7">
+              import { filter, withLatestFrom, switchMap, mergeMap } from 'rxjs/operators'
+              import { makeGetFontConfig } from './selectors'
+
+              const loadFont: Epic<Action, Action, IState> = ($action, store$) =>
+                $action.pipe(
+                  filter(isActionOf(Actions.Fonts.loadFont.request)),
+                  withLatestFrom($action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success)))),
+                  switchMap(([{ payload }]) =>{
+                    const config = getFontConfig(store$.value, payload)
+                    ...
+                  }),
+                )
+            </code><code data-trim data-noescape class="hljs typescript fragment fade-in" style="position: absolute" data-fragment-index="1" data-line-numbers="7-10">
+              import { filter, switchMap, mergeMap } from 'rxjs/operators'
+              import { makeGetFontConfig } from './selectors'
+
+              const getFontConfig = makeGetFontConfig()
+              const loadFont: Epic&lt;Action, Action, IState> = ($action, state$) =>
+                $action.pipe(
+                  filter(isActionOf(Actions.Fonts.loadConfig.success))
+                  mergeMap(() =>
+                    $action.pipe(
+                      filter(isActionOf(Actions.Fonts.loadFont.request)),
+                      switchMap(([{ payload }]) => {
+                        const config = getFontConfig(store$.value, payload)
+                        ...
+                      }),
+                    ),
+                  ),
+                )
+          </code></pre>
+        </section>
+        <section>
+          <h6>Do something between two actions</h6>
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="6-10">
+            import { interval } from 'rxjs'
+            import { filter, switchMap, map, takeUntil } from 'rxjs/operators'
+
+            const periodicToken: Epic&lt;Action, Action, IState> = ($action) =>
+              $action.pipe(
+                filter(isActionOf(Actions.User.login.success)),
+                switchMap(({ payload }) =>
+                  interval(Math.max(payload.jwt.expires_in * 1000 - 5000, 5000)).pipe(
+                    map(() => Actions.User.refreshToken()),
+                  ),
+                ),
+                takeUntil($action.pipe(filter(isActionOf(Actions.User.logout)))),
+              )
+          </code></pre>
+        </section>
+        <section>
+          <h6>Fire request and wait for success</h6>
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="10-18">
+            import { empty, concat } from 'rxjs'
+            import { filter, switchMap, map, first } from 'rxjs/operators'
+            import { getLogedInUser } from './selectors'
+
+            const changeMyPassword: Epic&lt;Action, Action, IState> = ($action, store$) =>
+              $action.pipe(
+                filter(isActionOf(Actions.User.changePassword)),
+                switchMap(({ payload }) => {
+                  const logedInUser = getLogedInUser(store$.value)
+                  return concat(
+                    of(Actions.Users.changeUserPassword.request({
+                      ...payload,
+                      username: logedInUser.username,
+                    })),
+                    $action.pipe(
+                      filter(isActionOf(Actions.Users.changeUserPassword.success)),
+                      filter(({ payload: username }) => username === logedInUser.username),
+                      first(),
+                      map(() => Actions.User.passwordChanged()),
+                    ),
+                  )
+                }),
+              )
+          </code></pre>
+        </section>
+        <section>
+          <section>
+            <h5>Combining with Router 5 and splitting Observables</h5>
+          </section>
+          <section>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+              import { Epic, ActionsObservable } from 'redux-observable'
+              import { concat, of } from 'rxjs'
+              import { filter, mergeMap, map, takeUntil } from 'rxjs/operators'
+              import { actionTypes, actions } from 'redux-router5'
+
+              import { IState } from 'root/reducer'
+              import { Action as AppAction } from 'root/actions'
+              import router from 'routing'
+
+              type TransitionSuccess = ReturnType&lt;typeof actions.transitionSuccess>
+              type NavigateTo = ReturnType&lt;typeof actions.navigateTo>
+
+              type Router5Action = TransitionSuccess | NavigateTo
+              export type Action = AppAction | Router5Action
+
+              const isTransitionSuccess = (action: Action): action is TransitionSuccess =>
+                action.type === actionTypes.TRANSITION_SUCCESS
+
+              const isRouteEnter = (routeName: string) =>
+                ({ payload: { previousRoute, route } }: TransitionSuccess): boolean =>
+                  (previousRoute === null || !previousRoute.name.startsWith(routeName)) && route.name.startsWith(routeName)
+
+              const isRouteLeave = (routeName: string) =>
+                ({ payload: { previousRoute, route } }: TransitionSuccess): boolean =>
+                  (previousRoute === null || previousRoute.name.startsWith(routeName)) && !route.name.startsWith(routeName)
+
+              const $routeEnter = ($action: ActionsObservable&lt;Action>, routeName: string) => $action.pipe(
+                filter(isTransitionSuccess),
+                filter(isRouteEnter(routeName)),
+              )
+
+              const $routeLeave = ($action: ActionsObservable&lt;Action>, routeName: string) => $action.pipe(
+                filter(isTransitionSuccess),
+                filter(isRouteLeave(routeName)),
+              )
+
+              const $enteringRoute = ($action: ActionsObservable&lt;Action>, routeName: string) => {
+                const fromAction = $routeEnter($action, routeName)
+                const alreadyActive = router.getState().name.startsWith(routeName)
+                return alreadyActive ? concat(of(null), fromAction) : fromAction
+              }
+
+              export const inRoute = (routeName: string, epic: Epic&lt;Action, Action, IState>): Epic&lt;Action, Action, IState> =>
+                ($action, state$, dependencies) => $enteringRoute($action, routeName).pipe(
+                  mergeMap(() => epic($action, state$, dependencies)),
+                  takeUntil($routeLeave($action, routeName)),
+                )
+
+              export const onRouteEnter = (routeName: string, action: Action | Action[]): Epic&lt;Action, Action, IState> =>
+                ($action) => $enteringRoute($action, routeName).pipe(
+                  Array.isArray(action)
+                    ? mergeMap(() => action)
+                    : map(() => action),
+                )
+
+              export const onRouteLeave = (routeName: string, action: Action | Action[]): Epic&lt;Action, Action, IState> =>
+                ($action) => $routeLeave($action, routeName).pipe(
+                  Array.isArray(action)
+                    ? mergeMap(() => action)
+                    : map(() => action),
+                )
+            </code></pre>
+          </section>
+          <section>
+            <h6>Usage</h6>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="3,8-14">
+              import { onRouteEnter } from './routerEpics'
+
+              const onEnter = onRouteEnter(RouteName.Designer, Actions.Designer.App.Element.resetTemplate())
+              const onEnterAfterLogin: Epic&lt;Action, Action, IState> = ($action, state$, dependencies) =>
+                $action.pipe(
+                  filter(isActionOf(Actions.User.login.success)),
+                  mergeMap(() =>
+                    onRouteEnter(RouteName.Workflow, [
+                      Actions.Workflow.Components.loadComponents.request(),
+                      Actions.Workflow.Printers.loadPrinters.request(),
+                      Actions.Workflow.Workflows.loadWorkflows.request(),
+                      Actions.Workflow.IOTypes.loadIOTypes.request(),
+                      Actions.Workflow.MimeTypes.loadMimeTypes.request(),
+                    ])($action, state$, dependencies),
+                  ),
+                  takeUntil($action.pipe(filter(isActionOf(Actions.User.logout)))),
+                )
+            </code></pre>
+          </section>
+          <section>
+            <h6>Usage II</h6>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+              import { merge, of, from, interval } from 'rxjs'
+              import { filter, map, flatMap, catchError, throttleTime } from 'rxjs/operators'
+              import { inRoute } from './routerEpics'
+
+              const validate = inRoute(RouteName.Designer, ($action, store$) =>
+                merge(
+                  $action.pipe(filter((action) => validationActions.includes(action.type))),
+                  interval(VALIDATION_INTERVAL),
+                ).pipe(
+                  throttleTime(VALIDATION_THROTTLE, undefined, { leading: true, trailing: true }),
+                  flatMap(() => from(new Promise&lt;IInvalidElement[]>((resolve, reject) => {
+                    const onMessage = (e: MessageEvent) => {
+                      const invalidElements = e.data
+                      validationWorker.removeEventListener('message', onMessage)
+                      resolve(invalidElements)
+                    }
+                    setTimeout(
+                      () => {
+                        validationWorker.removeEventListener('message', onMessage)
+                        reject(new Error('Timeout'))
+                      },
+                      VALIDATION_TIMEOUT,
+                    )
+                    validationWorker.addEventListener('message', onMessage)
+
+                    const template = getTemplate(store$.value)
+                    validationWorker.postMessage(template)
+                  }))),
+                  map(Actions.Designer.App.Validation.validate.success),
+                  catchError((error: Error) => of(Actions.Designer.App.Validation.validate.failure(error))),
+                ),
+              )
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <h6>Complex example</h6>
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+            const login: Epic&lt;Action, Action, IState> = ($action) =>
+              $action.pipe(
+                filter(isActionOf(Actions.User.login.request)),
+                switchMap(({ payload: { username, password } }) =>
+                  loginRequest(username, password).pipe(
+                    mergeMap((jwt) => concat(
+                      of(Actions.User.getPermissions.request()),
+                      of(Actions.User.getUserRoles.request(username)),
+                      from(zip(
+                        $action.pipe(filter(isActionOf(Actions.User.getUserRoles.success))),
+                        $action.pipe(filter(isActionOf(Actions.User.getPermissions.success))),
+                        ({ payload: roles }) => roles,
+                      )).pipe(
+                        first(),
+                        mergeMap((roles) =>
+                          roles.length > 1
+                            ? $action.pipe(
+                                filter(isActionOf(Actions.User.selectTenant)),
+                                switchMap(({ payload: newTenantId }) =>
+                                  newTenantId === jwt.tenantId
+                                    ? of(loginSuccess(jwt, username))
+                                    : from(loginRequest(username, password, newTenantId)).pipe(
+                                        map((newJwt) => loginSuccess(newJwt, username)),
+                                      ),
+                                ),
+                              )
+                            : of(loginSuccess(jwt, username)),
+                        ),
+                      ),
+                    )),
+                    catchError((error: Error) => of(Actions.User.login.failure(new Error(`cannot login: ${error.message}`)))),
+                  ),
+                ),
+              )
           </code></pre>
         </section>
       </div>
