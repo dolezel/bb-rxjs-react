@@ -124,9 +124,9 @@
         <section>
           <h3>Example</h3>
           <pre><code data-trim data-noescape class="hljs typescript">
-            import { Observable } from 'rxjs'
+            import * as rxjs from 'rxjs'
 
-            const foo = new Observable(subscriber => {
+            const foo = new rxjs.Observable(subscriber => {
               console.log('Hello')
               subscriber.next(42)
             })
@@ -138,6 +138,166 @@
               console.log(y)
             })
           </code></pre>
+        </section>
+        <section>
+          <section>
+            <h3>Operators</h3>
+          </section>
+          <section>
+            <h6>map</h6>
+            <div style="position: relative; height: 15em">
+              <img
+                class="fragment fade-out"
+                style="position: absolute; left: 0"
+                data-fragment-index="0"
+                src="https://s3-us-west-1.amazonaws.com/angular-university/blog-images/rxjs-map-operators/01-rxjs-map.png"
+              />
+              <pre class="fragment fade-in" style="position: absolute" data-fragment-index="0"><code data-trim data-noescape class="hljs typescript">
+                import * as rxjs from 'rxjs'
+
+                const bar = new rxjs.Observable(subscriber => {
+                  subscriber.next(1)
+                  subscriber.next(2)
+                  subscriber.next(3)
+                })
+
+                bar.pipe(
+                  rxjs.operators.map((x) => x * 10),
+                ).subscribe(x => {
+                  console.log(x)
+                })
+              </code></pre>
+            </div>
+          </section>
+          <section>
+            <h6>concat</h6>
+            <div style="position: relative; height: 15em">
+              <img
+                class="fragment fade-out"
+                style="position: absolute; left: 0"
+                data-fragment-index="0"
+                src="https://s3-us-west-1.amazonaws.com/angular-university/blog-images/rxjs-map-operators/01-rxjs-concat.png"
+              />
+              <pre class="stretch fragment fade-in" style="position: absolute" data-fragment-index="0"><code data-trim data-noescape class="hljs typescript">
+                import * as rxjs from 'rxjs'
+
+                const bar1 = new rxjs.Observable(subscriber => {
+                  subscriber.next(1)
+                  subscriber.next(2)
+                  subscriber.complete() // try to remove it
+                })
+
+                const bar2 = new rxjs.Observable(subscriber => {
+                  subscriber.next(11)
+                  subscriber.next(12)
+                  subscriber.complete()
+                })
+
+                rxjs.concat(bar1, bar2).subscribe(x => {
+                  console.log(x)
+                })
+              </code></pre>
+            </div>
+          </section>
+          <section>
+            <h6>take</h6>
+            <pre><code data-trim data-noescape class="hljs typescript">
+              import * as rxjs from 'rxjs'
+
+              rxjs.interval(1000).pipe(
+                rxjs.operators.take(4),
+              ).subscribe(x => {
+                console.log(x)
+              })
+            </code></pre>
+          </section>
+          <section>
+            <h6>mergeMap</h6>
+            <div style="position: relative; height: 15em">
+              <img
+                class="fragment fade-out"
+                style="position: absolute; left: 0"
+                data-fragment-index="0"
+                src="https://s3-us-west-1.amazonaws.com/angular-university/blog-images/rxjs-map-operators/04-rxjs-mergeMap-2.png"
+              />
+              <pre class="fragment fade-in" style="position: absolute" data-fragment-index="0"><code data-trim data-noescape class="hljs typescript">
+                import * as rxjs from 'rxjs'
+
+                rxjs.interval(500).pipe(
+                  rxjs.operators.take(4),
+                  rxjs.operators.map((x) => x * 10),
+                  rxjs.operators.mergeMap((x) =>
+                    rxjs.interval(200).pipe(
+                      rxjs.operators.take(5),
+                      rxjs.operators.map((y) => x + y),
+                    )
+                  ),
+                ).subscribe(x => {
+                  console.log(x)
+                })
+              </code></pre>
+            </div>
+          </section>
+          <section>
+            <h6>switchMap</h6>
+            <div style="position: relative; height: 15em">
+              <img
+                class="fragment fade-out"
+                style="position: absolute; left: 0"
+                data-fragment-index="0"
+                src="https://s3-us-west-1.amazonaws.com/angular-university/blog-images/rxjs-map-operators/05-switch.png"
+              />
+              <pre class="fragment fade-in" style="position: absolute" data-fragment-index="0"><code data-trim data-noescape class="hljs typescript">
+                import * as rxjs from 'rxjs'
+
+                rxjs.interval(500).pipe(
+                  rxjs.operators.take(4),
+                  rxjs.operators.map((x) => x * 10),
+                  rxjs.operators.switchMap((x) =>
+                    rxjs.interval(200).pipe(
+                      rxjs.operators.take(5),
+                      rxjs.operators.map((y) => x + y),
+                    )
+                  ),
+                ).subscribe(x => {
+                  console.log(x)
+                })
+              </code></pre>
+            </div>
+          </section>
+        </section>
+        <section tagcloud>
+					pipe
+					of
+					from
+					filter
+					map
+					tap
+					switchMap
+					mergeMap
+					mergeMapTo
+					flatMap
+					concat
+					concatAll
+					merge
+					combineAll
+					combineLatest
+					catchError
+          <span class="cloud-dots">...</span>
+        </section>
+        <section>
+          <h2>WTF?</h2>
+          <p>
+            <a href="https://rxmarbles.com/"
+              >Interactive diagrams of Rx Observables</a
+            >
+          </p>
+          <p>
+            <a href="https://rxjs.dev/operator-decision-tree"
+              >Operator Decision Tree</a
+            >
+          </p>
+          <p><a href="https://www.learnrxjs.io/">Learn RxJS</a></p>
         </section>
         <section>
           <h3>In React</h3>
@@ -356,45 +516,12 @@
             </code></pre>
           </section>
         </section>
-        <section tagcloud>
-					pipe
-					of
-					from
-					filter
-					map
-					tap
-					switchMap
-					mergeMap
-					mergeMapTo
-					flatMap
-					concat
-					concatAll
-					merge
-					combineAll
-					combineLatest
-					catchError
-          <span class="cloud-dots">...</span>
-        </section>
-        <section>
-          <h2>WTF?</h2>
-          <p>
-            <a href="https://rxmarbles.com/"
-              >Interactive diagrams of Rx Observables</a
-            >
-          </p>
-          <p>
-            <a href="https://rxjs.dev/operator-decision-tree"
-              >Operator Decision Tree</a
-            >
-          </p>
-          <p><a href="https://www.learnrxjs.io/">Learn RxJS</a></p>
-        </section>
         <section>
           <h2>Let's see some more epic examples</h2>
         </section>
         <section>
           <h6>Fire more actions on success</h6>
-          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="10-14">
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="10-13">
             import { from, of } from 'rxjs'
             import { filter, mergeMap, switchMap, map, catchError } from 'rxjs/operators'
 
@@ -457,57 +584,57 @@
         <section>
           <h6>Listen to action only after other acton occured</h6>
           <pre class="stretch" style="position: relative"><code data-trim data-noescape class="hljs typescript fragment fade-out" style="position: absolute" data-fragment-index="0" data-line-numbers="7-10">
-              import { combineLatest } from 'rxjs'
-              import { filter, switchMap } from 'rxjs/operators'
-              import { makeGetFontConfig } from './selectors'
+            import { filter, switchMap, mergeMap } from 'rxjs/operators'
+            import { makeGetFontConfig } from './selectors'
 
-              const getFontConfig = makeGetFontConfig()
-              const loadFont: Epic&lt;Action, Action, IState> = ($action, store$) =>
-                combineLatest(
-                  $action.pipe(filter(isActionOf(Actions.Fonts.loadFont.request))),
-                  $action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success))),
-                ).pipe(
-                  switchMap(([{ payload }]) => {
-                    const config = getFontConfig(store$.value, payload)
-                    ...
-                  }),
-                )
-            </code><code data-trim data-noescape class="hljs typescript fragment fade-in-then-out" style="position: absolute" data-fragment-index="0" data-line-numbers="6-7">
-              import { filter, withLatestFrom, switchMap, mergeMap } from 'rxjs/operators'
-              import { makeGetFontConfig } from './selectors'
-
-              const loadFont: Epic<Action, Action, IState> = ($action, store$) =>
-                $action.pipe(
-                  filter(isActionOf(Actions.Fonts.loadFont.request)),
-                  withLatestFrom($action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success)))),
-                  switchMap(([{ payload }]) =>{
-                    const config = getFontConfig(store$.value, payload)
-                    ...
-                  }),
-                )
-            </code><code data-trim data-noescape class="hljs typescript fragment fade-in" style="position: absolute" data-fragment-index="1" data-line-numbers="7-10">
-              import { filter, switchMap, mergeMap } from 'rxjs/operators'
-              import { makeGetFontConfig } from './selectors'
-
-              const getFontConfig = makeGetFontConfig()
-              const loadFont: Epic&lt;Action, Action, IState> = ($action, state$) =>
-                $action.pipe(
-                  filter(isActionOf(Actions.Fonts.loadConfig.success))
-                  mergeMap(() =>
-                    $action.pipe(
-                      filter(isActionOf(Actions.Fonts.loadFont.request)),
-                      switchMap(([{ payload }]) => {
-                        const config = getFontConfig(store$.value, payload)
-                        ...
-                      }),
-                    ),
+            const getFontConfig = makeGetFontConfig()
+            const loadFont: Epic&lt;Action, Action, IState> = ($action, state$) =>
+              $action.pipe(
+                filter(isActionOf(Actions.Fonts.loadConfig.success))
+                mergeMap(() =>
+                  $action.pipe(
+                    filter(isActionOf(Actions.Fonts.loadFont.request)),
+                    switchMap(([{ payload }]) => {
+                      const config = getFontConfig(store$.value, payload)
+                      ...
+                    }),
                   ),
-                )
+                ),
+              )
+          </code><code data-trim data-noescape class="hljs typescript fragment fade-in-then-out" style="position: absolute" data-fragment-index="0" data-line-numbers="6-7">
+            import { filter, switchMap, withLatestFrom } from 'rxjs/operators'
+            import { makeGetFontConfig } from './selectors'
+
+            const loadFont: Epic<Action, Action, IState> = ($action, store$) =>
+              $action.pipe(
+                filter(isActionOf(Actions.Fonts.loadFont.request)),
+                withLatestFrom($action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success)))),
+                switchMap(([{ payload }]) =>{
+                  const config = getFontConfig(store$.value, payload)
+                  ...
+                }),
+              )
+          </code><code data-trim data-noescape class="hljs typescript fragment fade-in" style="position: absolute" data-fragment-index="1" data-line-numbers="7-10">
+            import { combineLatest } from 'rxjs'
+            import { filter, switchMap } from 'rxjs/operators'
+            import { makeGetFontConfig } from './selectors'
+
+            const getFontConfig = makeGetFontConfig()
+            const loadFont: Epic&lt;Action, Action, IState> = ($action, store$) =>
+              combineLatest(
+                $action.pipe(filter(isActionOf(Actions.Fonts.loadFont.request))),
+                $action.pipe(filter(isActionOf(Actions.Fonts.loadConfig.success))),
+              ).pipe(
+                switchMap(([{ payload }]) => {
+                  const config = getFontConfig(store$.value, payload)
+                  ...
+                }),
+              )
           </code></pre>
         </section>
         <section>
           <h6>Do something between two actions</h6>
-          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="6-10">
+          <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="6-12">
             import { interval } from 'rxjs'
             import { filter, switchMap, map, takeUntil } from 'rxjs/operators'
 
@@ -526,7 +653,7 @@
         <section>
           <h6>Fire request and wait for success</h6>
           <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="10-18">
-            import { empty, concat } from 'rxjs'
+            import { empty, merge } from 'rxjs'
             import { filter, switchMap, map, first } from 'rxjs/operators'
             import { getLogedInUser } from './selectors'
 
@@ -535,7 +662,7 @@
                 filter(isActionOf(Actions.User.changePassword)),
                 switchMap(({ payload }) => {
                   const logedInUser = getLogedInUser(store$.value)
-                  return concat(
+                  return merge(
                     of(Actions.Users.changeUserPassword.request({
                       ...payload,
                       username: logedInUser.username,
@@ -558,7 +685,7 @@
           <section>
             <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
               import { Epic, ActionsObservable } from 'redux-observable'
-              import { concat, of } from 'rxjs'
+              import { merge, of } from 'rxjs'
               import { filter, mergeMap, map, takeUntil } from 'rxjs/operators'
               import { actionTypes, actions } from 'redux-router5'
 
@@ -596,7 +723,7 @@
               const $enteringRoute = ($action: ActionsObservable&lt;Action>, routeName: string) => {
                 const fromAction = $routeEnter($action, routeName)
                 const alreadyActive = router.getState().name.startsWith(routeName)
-                return alreadyActive ? concat(of(null), fromAction) : fromAction
+                return alreadyActive ? merge(of(null), fromAction) : fromAction
               }
 
               export const inRoute = (routeName: string, epic: Epic&lt;Action, Action, IState>): Epic&lt;Action, Action, IState> =>
@@ -649,6 +776,8 @@
               import { filter, map, flatMap, catchError, throttleTime } from 'rxjs/operators'
               import { inRoute } from './routerEpics'
 
+              const validationWorker = new Worker('validationWorker.js')
+
               const validate = inRoute(RouteName.Designer, ($action, store$) =>
                 merge(
                   $action.pipe(filter((action) => validationActions.includes(action.type))),
@@ -688,17 +817,17 @@
                 filter(isActionOf(Actions.User.login.request)),
                 switchMap(({ payload: { username, password } }) =>
                   loginRequest(username, password).pipe(
-                    mergeMap((jwt) => concat(
+                    mergeMap((jwt) => merge(
                       of(Actions.User.getPermissions.request()),
                       of(Actions.User.getUserRoles.request(username)),
                       from(zip(
                         $action.pipe(filter(isActionOf(Actions.User.getUserRoles.success))),
                         $action.pipe(filter(isActionOf(Actions.User.getPermissions.success))),
-                        ({ payload: roles }) => roles,
+                        ({ payload: tenantsRoles }) => tenantsRoles,
                       )).pipe(
                         first(),
-                        mergeMap((roles) =>
-                          roles.length > 1
+                        mergeMap((tenantsRoles) =>
+                          tenantsRoles.length > 1
                             ? $action.pipe(
                                 filter(isActionOf(Actions.User.selectTenant)),
                                 switchMap(({ payload: newTenantId }) =>
@@ -718,6 +847,106 @@
                 ),
               )
           </code></pre>
+        </section>
+        <section>
+          <section>
+            <h4>React example</h4>
+          </section>
+          <section>
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript">
+              import React from 'react'
+              import { Observable, Subject, Subscription, of, merge, from  } from 'rxjs'
+              import { debounceTime, distinctUntilChanged, switchMap, startWith, map, mergeMap, catchError } from 'rxjs/operators'
+
+              interface ITextToImageProps  {
+                text: string
+              }
+
+              interface ITextToImageState {
+                text: string
+                image?: string
+                error?: string
+              }
+
+              const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+                const bytes: number[] = [].slice.call(new Uint8Array(buffer))
+                const binary = bytes.reduce((str, b) => `${str}${String.fromCharCode(b)}`, '')
+                return window.btoa(binary)
+              }
+
+              class TextToImage extends React.Component&lt;ITextToImageProps, ITextToImageState> {
+                public state: ITextToImageState = {
+                  text: this.props.text,
+                }
+
+                private text$ = new Subject&lt;string>()
+                private state$: Observable&lt;Pick&lt;ITextToImageState, 'image' | 'error'>> =
+                  this.text$.pipe(
+                    startWith(this.state.text),
+                    debounceTime(500),
+                    distinctUntilChanged(),
+                    switchMap((text) => {
+                      const reset = of({ image: undefined, error: undefined })
+                      return text.length > 0
+                        ? merge(
+                            reset,
+                            from(fetch(`/toImage/${text}`)).pipe(
+                              mergeMap((response) => response.arrayBuffer()),
+                              map((buffer) => ({
+                                image: `data:image/jpeg;base64,${arrayBufferToBase64(buffer)}`,
+                              })),
+                              catchError((error) => of({ error: error.message })),
+                            ),
+                          )
+                        : reset
+                    }),
+                  )
+                private stateUpdates$?: Subscription
+
+                public componentDidMount() {
+                  this.stateUpdates$ = this.state$.subscribe(this.setState.bind(this))
+                }
+
+                public componentWillUnmount() {
+                  if (this.stateUpdates$ !== undefined) {
+                    this.stateUpdates$.unsubscribe()
+                  }
+                }
+
+                public render() {
+                  const { text, image, error } = this.state
+                  return (
+                    &lt;>
+                      &lt;input value={text} onChange={this.setText} />
+                      {(error !== undefined || image !== undefined)
+                          ? (
+                            &lt;div>
+                              {error === undefined
+                                ? &lt;img src={image} />
+                                : error
+                              }
+                            &lt;/div>
+                          )
+                          : null
+                        }
+                    &lt;/>
+                  )
+                }
+
+                private setText = (ev: React.ChangeEvent&lt;HTMLInputElement>) => {
+                  const text = ev.target.value
+                  this.setState({ text })
+                  this.text$.next(text)
+                }
+              }
+
+              export default TextToImage
+            </code></pre>
+          </section>
+        </section>
+        <section>
+          <h3>That's all folks</h3>
+          <p>Happy coding! :)</p>
         </section>
       </div>
     </div>
