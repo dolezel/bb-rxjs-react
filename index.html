@@ -492,7 +492,7 @@
         <section>
           <section>
             <h3>Let's go async</h3>
-            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="1,2,6,10-20">
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="1,2,6,14-27">
               import { from, of } from 'rxjs'
               import { filter, switchMap, catchError } from 'rxjs/operators'
 
@@ -500,13 +500,23 @@
               type DataType = t.TypeOf&lt;typeof DataType>
               const dataValidator = validate(DataType)
 
-              const loadData = createAsyncAction('loadData', 'loadDataSuccess', 'loadDataFailure')&lt;string, DataType, Error>()
+              const loadData = createAsyncAction(
+                'loadData',
+                'loadDataSuccess',
+                'loadDataFailure'
+              )&lt;string, DataType, Error>()
 
               const someEpic: ($action) =>
                 $action.pipe(
                   filter(isActionOf(loadData.request)),
                   switchMap(({ payload }) =>
                     from(fetch(`/api/${payload}`)).pipe(
+                      mergeMap((response) => {
+                        if (!response.ok) {
+                          throw new Error('fetching error')
+                        }
+                        return response.json()
+                      })
                       map(dataValidator),
                       map(loadData.success),
                       catchError((error: Error) => of(loadData.failure(error))),
@@ -560,7 +570,8 @@
                   from(fetch(`/api/${resource}`)).pipe(
                     map(validateListing),
                     map(Actions.Library.Resources.getListing.success),
-                    catchError((error: Error) => of(Actions.Library.Resources.getListing.failure(error.message))),
+                    catchError((error: Error) =>
+                      of(Actions.Library.Resources.getListing.failure(error.message))),
                   ),
                 ),
               )
@@ -572,7 +583,8 @@
                     from(fetch(`/api/${resource}`)).pipe(
                       map(validateListing),
                       map(Actions.Library.Resources.getListing.success),
-                      catchError((error: Error) => of(Actions.Library.Resources.getListing.failure(error.message))),
+                      catchError((error: Error) =>
+                        of(Actions.Library.Resources.getListing.failure(error.message))),
                     ),
                   ),
                 )),
@@ -710,15 +722,17 @@
                 ({ payload: { previousRoute, route } }: TransitionSuccess): boolean =>
                   (previousRoute === null || previousRoute.name.startsWith(routeName)) && !route.name.startsWith(routeName)
 
-              const $routeEnter = ($action: ActionsObservable&lt;Action>, routeName: string) => $action.pipe(
-                filter(isTransitionSuccess),
-                filter(isRouteEnter(routeName)),
-              )
+              const $routeEnter = ($action: ActionsObservable&lt;Action>, routeName: string) =>
+                $action.pipe(
+                  filter(isTransitionSuccess),
+                  filter(isRouteEnter(routeName)),
+                )
 
-              const $routeLeave = ($action: ActionsObservable&lt;Action>, routeName: string) => $action.pipe(
-                filter(isTransitionSuccess),
-                filter(isRouteLeave(routeName)),
-              )
+              const $routeLeave = ($action: ActionsObservable&lt;Action>, routeName: string) =>
+                $action.pipe(
+                  filter(isTransitionSuccess),
+                  filter(isRouteLeave(routeName)),
+                )
 
               const $enteringRoute = ($action: ActionsObservable&lt;Action>, routeName: string) => {
                 const fromAction = $routeEnter($action, routeName)
@@ -749,10 +763,13 @@
           </section>
           <section>
             <h6>Usage</h6>
-            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="3,8-14">
+            <pre class="stretch"><code data-trim data-noescape class="hljs typescript" data-line-numbers="3-6,11-17">
               import { onRouteEnter } from './routerEpics'
 
-              const onEnter = onRouteEnter(RouteName.Designer, Actions.Designer.App.Element.resetTemplate())
+              const onEnter = onRouteEnter(
+                RouteName.Designer,
+                Actions.Designer.App.Element.resetTemplate(),
+              )
               const onEnterAfterLogin: Epic&lt;Action, Action, IState> = ($action, state$, dependencies) =>
                 $action.pipe(
                   filter(isActionOf(Actions.User.login.success)),
@@ -803,7 +820,8 @@
                     validationWorker.postMessage(template)
                   }))),
                   map(Actions.Designer.App.Validation.validate.success),
-                  catchError((error: Error) => of(Actions.Designer.App.Validation.validate.failure(error))),
+                  catchError((error: Error) =>
+                    of(Actions.Designer.App.Validation.validate.failure(error))),
                 ),
               )
             </code></pre>
@@ -842,7 +860,8 @@
                         ),
                       ),
                     )),
-                    catchError((error: Error) => of(Actions.User.login.failure(new Error(`cannot login: ${error.message}`)))),
+                    catchError((error: Error) =>
+                      of(Actions.User.login.failure(new Error(`cannot login: ${error.message}`)))),
                   ),
                 ),
               )
